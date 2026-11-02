@@ -4,7 +4,7 @@
 
 If you've ever kept a terminal open just to run `lazygit`, this is that workflow inside VS Code: six focused panels, single-key actions, and diffs that open in the editor you're already looking at.
 
-<!-- Screenshot: the full side panel with the commit graph visible -->
+![Panel](media/panel.png)
 
 ## Highlights
 
@@ -30,7 +30,7 @@ Press `1`–`6` from any Source Studio view to jump between them, `?` to see the
 | 5 | **Commits** | The graph for the checked-out branch (`a` for all branches). Hollow dots are unpushed. |
 | 6 | **Stashes** | Click to see a stash's contents. |
 
-<!-- Screenshot: Files view with a diff open -->
+![File Diff](media/file_diff.png)
 
 ## Keymap
 
@@ -95,7 +95,7 @@ Keys work while a Source Studio view has focus and don't interfere with the edit
 
 **In any editor** — `alt+b` toggles file blame; right-click for line blame.
 
-<!-- Screenshot: the commit panel -->
+![Commit Dialog](media/commit_dialog.png)
 
 ## Commit panel
 
