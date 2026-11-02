@@ -1,0 +1,9 @@
+.vscode/**
+.github/**
+src/**
+node_modules/**
+esbuild.mjs
+tsconfig.json
+**/*.map
+media/icon.png
+*.vsix

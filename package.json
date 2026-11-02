@@ -1,0 +1,1288 @@
+{
+	"name": "source-studio",
+	"displayName": "Source Studio",
+	"description": "lazygit-style source control for VS Code: multi-repo status, keyboard-driven staging, branches, worktrees, stashes, a commit graph, interactive rebase, blame and undo.",
+	"version": "1.0.0",
+	"publisher": "EventTemple",
+	"license": "MIT",
+	"icon": "media/icon-128.png",
+	"galleryBanner": {
+		"color": "#242936",
+		"theme": "dark"
+	},
+	"keywords": [
+		"git",
+		"lazygit",
+		"source control",
+		"scm",
+		"rebase",
+		"worktree",
+		"stash",
+		"blame",
+		"commit graph"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/eventtemple/source_studio"
+	},
+	"bugs": {
+		"url": "https://github.com/eventtemple/source_studio/issues"
+	},
+	"homepage": "https://github.com/eventtemple/source_studio#readme",
+	"engines": {
+		"vscode": "^1.90.0"
+	},
+	"categories": [
+		"SCM Providers"
+	],
+	"extensionKind": [
+		"workspace"
+	],
+	"activationEvents": [
+		"onStartupFinished",
+		"workspaceContains:**/.git"
+	],
+	"main": "./dist/extension.js",
+	"contributes": {
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "sourcestudio",
+					"title": "Source Studio",
+					"icon": "$(source-control)"
+				}
+			]
+		},
+		"views": {
+			"sourcestudio": [
+				{
+					"id": "sourcestudio.repos",
+					"name": "Repositories",
+					"icon": "$(repo)"
+				},
+				{
+					"id": "sourcestudio.files",
+					"name": "Files",
+					"icon": "$(files)"
+				},
+				{
+					"id": "sourcestudio.branches",
+					"name": "Branches",
+					"icon": "$(git-branch)"
+				},
+				{
+					"id": "sourcestudio.worktrees",
+					"name": "Worktrees",
+					"icon": "$(folder-library)"
+				},
+				{
+					"id": "sourcestudio.commits",
+					"name": "Commits",
+					"type": "webview",
+					"icon": "$(git-commit)"
+				},
+				{
+					"id": "sourcestudio.stashes",
+					"name": "Stashes",
+					"icon": "$(archive)"
+				}
+			]
+		},
+		"viewsWelcome": [
+			{
+				"view": "sourcestudio.repos",
+				"contents": "No git repositories found in this workspace.\n[Refresh](command:sourcestudio.refresh)",
+				"when": "!sourcestudio.hasRepos"
+			}
+		],
+		"commands": [
+			{
+				"command": "sourcestudio.refresh",
+				"title": "Refresh",
+				"category": "Source Studio",
+				"icon": "$(refresh)"
+			},
+			{
+				"command": "sourcestudio.setActiveRepo",
+				"title": "Set Active Repository",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.pickActiveRepo",
+				"title": "Pick Active Repository",
+				"category": "Source Studio",
+				"icon": "$(repo)"
+			},
+			{
+				"command": "sourcestudio.openDiff",
+				"title": "Open Diff",
+				"category": "Source Studio",
+				"icon": "$(diff)"
+			},
+			{
+				"command": "sourcestudio.openFile",
+				"title": "Open File",
+				"category": "Source Studio",
+				"icon": "$(go-to-file)"
+			},
+			{
+				"command": "sourcestudio.stage",
+				"title": "Stage",
+				"category": "Source Studio",
+				"icon": "$(add)"
+			},
+			{
+				"command": "sourcestudio.unstage",
+				"title": "Unstage",
+				"category": "Source Studio",
+				"icon": "$(remove)"
+			},
+			{
+				"command": "sourcestudio.toggleStage",
+				"title": "Toggle Staged",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.stageAll",
+				"title": "Stage All",
+				"category": "Source Studio",
+				"icon": "$(add)"
+			},
+			{
+				"command": "sourcestudio.unstageAll",
+				"title": "Unstage All",
+				"category": "Source Studio",
+				"icon": "$(remove)"
+			},
+			{
+				"command": "sourcestudio.discard",
+				"title": "Discard Changes",
+				"category": "Source Studio",
+				"icon": "$(discard)"
+			},
+			{
+				"command": "sourcestudio.commit",
+				"title": "Commit",
+				"category": "Source Studio",
+				"icon": "$(check)"
+			},
+			{
+				"command": "sourcestudio.push",
+				"title": "Push",
+				"category": "Source Studio",
+				"icon": "$(arrow-up)"
+			},
+			{
+				"command": "sourcestudio.pull",
+				"title": "Pull",
+				"category": "Source Studio",
+				"icon": "$(arrow-down)"
+			},
+			{
+				"command": "sourcestudio.fetch",
+				"title": "Fetch",
+				"category": "Source Studio",
+				"icon": "$(cloud-download)"
+			},
+			{
+				"command": "sourcestudio.showKeymap",
+				"title": "Show Keymap",
+				"category": "Source Studio",
+				"icon": "$(question)"
+			},
+			{
+				"command": "sourcestudio.checkoutBranch",
+				"title": "Checkout",
+				"category": "Source Studio",
+				"icon": "$(arrow-right)"
+			},
+			{
+				"command": "sourcestudio.newBranch",
+				"title": "New Branch",
+				"category": "Source Studio",
+				"icon": "$(add)"
+			},
+			{
+				"command": "sourcestudio.deleteBranch",
+				"title": "Delete Branch",
+				"category": "Source Studio",
+				"icon": "$(trash)"
+			},
+			{
+				"command": "sourcestudio.renameBranch",
+				"title": "Rename Branch",
+				"category": "Source Studio",
+				"icon": "$(edit)"
+			},
+			{
+				"command": "sourcestudio.rebaseOnto",
+				"title": "Rebase Current Branch Onto This",
+				"category": "Source Studio",
+				"icon": "$(git-merge)"
+			},
+			{
+				"command": "sourcestudio.mergeInto",
+				"title": "Merge Into Current Branch",
+				"category": "Source Studio",
+				"icon": "$(git-pull-request)"
+			},
+			{
+				"command": "sourcestudio.fastForward",
+				"title": "Fast-Forward From Upstream",
+				"category": "Source Studio",
+				"icon": "$(fold-down)"
+			},
+			{
+				"command": "sourcestudio.setUpstream",
+				"title": "Set Upstream",
+				"category": "Source Studio",
+				"icon": "$(link)"
+			},
+			{
+				"command": "sourcestudio.continueOperation",
+				"title": "Continue (rebase/merge)",
+				"category": "Source Studio",
+				"icon": "$(debug-continue)"
+			},
+			{
+				"command": "sourcestudio.abortOperation",
+				"title": "Abort (rebase/merge)",
+				"category": "Source Studio",
+				"icon": "$(debug-stop)"
+			},
+			{
+				"command": "sourcestudio.showStash",
+				"title": "Show Stash",
+				"category": "Source Studio",
+				"icon": "$(diff)"
+			},
+			{
+				"command": "sourcestudio.applyStash",
+				"title": "Apply Stash",
+				"category": "Source Studio",
+				"icon": "$(arrow-right)"
+			},
+			{
+				"command": "sourcestudio.popStash",
+				"title": "Pop Stash",
+				"category": "Source Studio",
+				"icon": "$(arrow-up)"
+			},
+			{
+				"command": "sourcestudio.dropStash",
+				"title": "Drop Stash",
+				"category": "Source Studio",
+				"icon": "$(trash)"
+			},
+			{
+				"command": "sourcestudio.createStash",
+				"title": "Stash Changes",
+				"category": "Source Studio",
+				"icon": "$(archive)"
+			},
+			{
+				"command": "sourcestudio.switchWorktree",
+				"title": "Switch to Worktree",
+				"category": "Source Studio",
+				"icon": "$(arrow-right)"
+			},
+			{
+				"command": "sourcestudio.addWorktree",
+				"title": "New Worktree",
+				"category": "Source Studio",
+				"icon": "$(add)"
+			},
+			{
+				"command": "sourcestudio.removeWorktree",
+				"title": "Remove Worktree",
+				"category": "Source Studio",
+				"icon": "$(trash)"
+			},
+			{
+				"command": "sourcestudio.pruneWorktrees",
+				"title": "Prune Worktrees",
+				"category": "Source Studio",
+				"icon": "$(clear-all)"
+			},
+			{
+				"command": "sourcestudio.showCommit",
+				"title": "Show Commit",
+				"category": "Source Studio",
+				"icon": "$(diff)"
+			},
+			{
+				"command": "sourcestudio.checkoutCommit",
+				"title": "Checkout Commit (detached)",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.branchFromCommit",
+				"title": "New Branch at Commit",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.cherryPick",
+				"title": "Cherry-pick onto Current Branch",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.revertCommit",
+				"title": "Revert Commit",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.resetToCommit",
+				"title": "Reset to Commit…",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.copySha",
+				"title": "Copy SHA",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.squashCommit",
+				"title": "Squash into Parent",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.fixupCommit",
+				"title": "Fixup into Parent",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.rewordCommit",
+				"title": "Reword Commit",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.dropCommit",
+				"title": "Drop Commit",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.editCommit",
+				"title": "Edit Commit (pause rebase here)",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.moveCommitDown",
+				"title": "Move Commit Down",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.moveCommitUp",
+				"title": "Move Commit Up",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.amendCommit",
+				"title": "Amend HEAD with Staged Changes",
+				"category": "Source Studio",
+				"icon": "$(edit)"
+			},
+			{
+				"command": "sourcestudio.undo",
+				"title": "Undo Last Action",
+				"category": "Source Studio",
+				"icon": "$(discard)"
+			},
+			{
+				"command": "sourcestudio.redo",
+				"title": "Redo",
+				"category": "Source Studio",
+				"icon": "$(redo)"
+			},
+			{
+				"command": "sourcestudio.showReflog",
+				"title": "Browse Reflog…",
+				"category": "Source Studio",
+				"icon": "$(history)"
+			},
+			{
+				"command": "sourcestudio.stageSelection",
+				"title": "Stage Selected Lines",
+				"category": "Source Studio",
+				"icon": "$(add)"
+			},
+			{
+				"command": "sourcestudio.stageHunk",
+				"title": "Stage Hunk at Cursor",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.unstageSelection",
+				"title": "Unstage Selected Lines",
+				"category": "Source Studio",
+				"icon": "$(remove)"
+			},
+			{
+				"command": "sourcestudio.unstageHunk",
+				"title": "Unstage Hunk at Cursor",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.discardSelection",
+				"title": "Discard Selected Lines",
+				"category": "Source Studio",
+				"icon": "$(discard)"
+			},
+			{
+				"command": "sourcestudio.discardHunk",
+				"title": "Discard Hunk at Cursor",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.toggleFileBlame",
+				"title": "Toggle File Blame",
+				"category": "Source Studio",
+				"icon": "$(person)"
+			},
+			{
+				"command": "sourcestudio.toggleLineBlame",
+				"title": "Toggle Line Blame",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.showLineBlame",
+				"title": "Show Line Blame",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.showCommitSha",
+				"title": "Show Commit by SHA",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.copyText",
+				"title": "Copy",
+				"category": "Source Studio"
+			}
+		],
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "sourcestudio.setActiveRepo",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.openDiff",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.openFile",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.stage",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.unstage",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.discard",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.checkoutBranch",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.deleteBranch",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.renameBranch",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.rebaseOnto",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.mergeInto",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.fastForward",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.setUpstream",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.continueOperation",
+					"when": "sourcestudio.operation"
+				},
+				{
+					"command": "sourcestudio.abortOperation",
+					"when": "sourcestudio.operation"
+				},
+				{
+					"command": "sourcestudio.showStash",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.applyStash",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.popStash",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.dropStash",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.switchWorktree",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.removeWorktree",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.showCommit",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.checkoutCommit",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.branchFromCommit",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.cherryPick",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.revertCommit",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.resetToCommit",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.copySha",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.squashCommit",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.fixupCommit",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.rewordCommit",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.dropCommit",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.editCommit",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.moveCommitDown",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.moveCommitUp",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.stageSelection",
+					"when": "isInDiffEditor"
+				},
+				{
+					"command": "sourcestudio.stageHunk",
+					"when": "isInDiffEditor"
+				},
+				{
+					"command": "sourcestudio.unstageSelection",
+					"when": "isInDiffEditor"
+				},
+				{
+					"command": "sourcestudio.unstageHunk",
+					"when": "isInDiffEditor"
+				},
+				{
+					"command": "sourcestudio.discardSelection",
+					"when": "isInDiffEditor"
+				},
+				{
+					"command": "sourcestudio.discardHunk",
+					"when": "isInDiffEditor"
+				},
+				{
+					"command": "sourcestudio.showCommitSha",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.copyText",
+					"when": "false"
+				}
+			],
+			"view/title": [
+				{
+					"command": "sourcestudio.refresh",
+					"when": "view == sourcestudio.repos",
+					"group": "navigation@9"
+				},
+				{
+					"command": "sourcestudio.commit",
+					"when": "view == sourcestudio.files",
+					"group": "navigation@1"
+				},
+				{
+					"command": "sourcestudio.stageAll",
+					"when": "view == sourcestudio.files",
+					"group": "navigation@2"
+				},
+				{
+					"command": "sourcestudio.unstageAll",
+					"when": "view == sourcestudio.files",
+					"group": "navigation@3"
+				},
+				{
+					"command": "sourcestudio.fetch",
+					"when": "view == sourcestudio.files",
+					"group": "navigation@4"
+				},
+				{
+					"command": "sourcestudio.pull",
+					"when": "view == sourcestudio.files",
+					"group": "navigation@5"
+				},
+				{
+					"command": "sourcestudio.push",
+					"when": "view == sourcestudio.files",
+					"group": "navigation@6"
+				},
+				{
+					"command": "sourcestudio.showKeymap",
+					"when": "view == sourcestudio.files",
+					"group": "navigation@9"
+				},
+				{
+					"command": "sourcestudio.continueOperation",
+					"when": "view =~ /^sourcestudio\\.(files|branches)$/ && sourcestudio.operation",
+					"group": "navigation@0"
+				},
+				{
+					"command": "sourcestudio.abortOperation",
+					"when": "view =~ /^sourcestudio\\.(files|branches)$/ && sourcestudio.operation",
+					"group": "navigation@0"
+				},
+				{
+					"command": "sourcestudio.newBranch",
+					"when": "view == sourcestudio.branches",
+					"group": "navigation@1"
+				},
+				{
+					"command": "sourcestudio.fetch",
+					"when": "view == sourcestudio.branches",
+					"group": "navigation@2"
+				},
+				{
+					"command": "sourcestudio.showKeymap",
+					"when": "view == sourcestudio.branches",
+					"group": "navigation@9"
+				},
+				{
+					"command": "sourcestudio.createStash",
+					"when": "view == sourcestudio.files",
+					"group": "navigation@7"
+				},
+				{
+					"command": "sourcestudio.createStash",
+					"when": "view == sourcestudio.stashes",
+					"group": "navigation@1"
+				},
+				{
+					"command": "sourcestudio.addWorktree",
+					"when": "view == sourcestudio.worktrees",
+					"group": "navigation@1"
+				},
+				{
+					"command": "sourcestudio.pruneWorktrees",
+					"when": "view == sourcestudio.worktrees",
+					"group": "navigation@2"
+				},
+				{
+					"command": "sourcestudio.amendCommit",
+					"when": "view == sourcestudio.files",
+					"group": "navigation@1"
+				},
+				{
+					"command": "sourcestudio.undo",
+					"when": "view == sourcestudio.commits",
+					"group": "navigation@1"
+				},
+				{
+					"command": "sourcestudio.showReflog",
+					"when": "view == sourcestudio.commits",
+					"group": "navigation@2"
+				},
+				{
+					"command": "sourcestudio.showReflog",
+					"when": "view == sourcestudio.branches",
+					"group": "navigation@3"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "sourcestudio.openFile",
+					"when": "view == sourcestudio.files && viewItem =~ /^file:/",
+					"group": "inline@1"
+				},
+				{
+					"command": "sourcestudio.stage",
+					"when": "view == sourcestudio.files && viewItem =~ /^(file|dir|group):(unstaged|untracked|conflicted)$/",
+					"group": "inline@2"
+				},
+				{
+					"command": "sourcestudio.unstage",
+					"when": "view == sourcestudio.files && viewItem =~ /^(file|dir|group):staged$/",
+					"group": "inline@2"
+				},
+				{
+					"command": "sourcestudio.discard",
+					"when": "view == sourcestudio.files && viewItem =~ /^(file|dir|group):(unstaged|untracked)$/",
+					"group": "inline@3"
+				},
+				{
+					"command": "sourcestudio.openDiff",
+					"when": "view == sourcestudio.files && viewItem =~ /^(file|dir):/",
+					"group": "1_open@1"
+				},
+				{
+					"command": "sourcestudio.discard",
+					"when": "view == sourcestudio.files && viewItem =~ /^(file|dir|group):(unstaged|untracked)$/",
+					"group": "2_modify@1"
+				},
+				{
+					"command": "sourcestudio.checkoutBranch",
+					"when": "view == sourcestudio.branches && viewItem =~ /^branch:(local|remote)$/",
+					"group": "inline@1"
+				},
+				{
+					"command": "sourcestudio.deleteBranch",
+					"when": "view == sourcestudio.branches && viewItem =~ /^branch:(local|remote)$/",
+					"group": "inline@2"
+				},
+				{
+					"command": "sourcestudio.checkoutBranch",
+					"when": "view == sourcestudio.branches && viewItem =~ /^branch:(local|remote)$/",
+					"group": "1_nav@1"
+				},
+				{
+					"command": "sourcestudio.newBranch",
+					"when": "view == sourcestudio.branches && viewItem =~ /^branch:/",
+					"group": "1_nav@2"
+				},
+				{
+					"command": "sourcestudio.rebaseOnto",
+					"when": "view == sourcestudio.branches && viewItem =~ /^branch:(local|remote)$/",
+					"group": "2_integrate@1"
+				},
+				{
+					"command": "sourcestudio.mergeInto",
+					"when": "view == sourcestudio.branches && viewItem =~ /^branch:(local|remote)$/",
+					"group": "2_integrate@2"
+				},
+				{
+					"command": "sourcestudio.fastForward",
+					"when": "view == sourcestudio.branches && viewItem =~ /^branch:(local|current)$/",
+					"group": "2_integrate@3"
+				},
+				{
+					"command": "sourcestudio.setUpstream",
+					"when": "view == sourcestudio.branches && viewItem =~ /^branch:(local|current)$/",
+					"group": "3_manage@1"
+				},
+				{
+					"command": "sourcestudio.renameBranch",
+					"when": "view == sourcestudio.branches && viewItem =~ /^branch:(local|current)$/",
+					"group": "3_manage@2"
+				},
+				{
+					"command": "sourcestudio.deleteBranch",
+					"when": "view == sourcestudio.branches && viewItem =~ /^branch:(local|remote)$/",
+					"group": "3_manage@3"
+				},
+				{
+					"command": "sourcestudio.applyStash",
+					"when": "view == sourcestudio.stashes && viewItem == stash",
+					"group": "inline@1"
+				},
+				{
+					"command": "sourcestudio.popStash",
+					"when": "view == sourcestudio.stashes && viewItem == stash",
+					"group": "inline@2"
+				},
+				{
+					"command": "sourcestudio.dropStash",
+					"when": "view == sourcestudio.stashes && viewItem == stash",
+					"group": "inline@3"
+				},
+				{
+					"command": "sourcestudio.showStash",
+					"when": "view == sourcestudio.stashes && viewItem == stash",
+					"group": "1_open@1"
+				},
+				{
+					"command": "sourcestudio.applyStash",
+					"when": "view == sourcestudio.stashes && viewItem == stash",
+					"group": "2_apply@1"
+				},
+				{
+					"command": "sourcestudio.popStash",
+					"when": "view == sourcestudio.stashes && viewItem == stash",
+					"group": "2_apply@2"
+				},
+				{
+					"command": "sourcestudio.dropStash",
+					"when": "view == sourcestudio.stashes && viewItem == stash",
+					"group": "3_manage@1"
+				},
+				{
+					"command": "sourcestudio.switchWorktree",
+					"when": "view == sourcestudio.worktrees && viewItem =~ /^worktree:(main|linked)$/",
+					"group": "inline@1"
+				},
+				{
+					"command": "sourcestudio.removeWorktree",
+					"when": "view == sourcestudio.worktrees && viewItem == worktree:linked",
+					"group": "inline@2"
+				},
+				{
+					"command": "sourcestudio.switchWorktree",
+					"when": "view == sourcestudio.worktrees && viewItem =~ /^worktree:(main|linked)$/",
+					"group": "1_nav@1"
+				},
+				{
+					"command": "sourcestudio.removeWorktree",
+					"when": "view == sourcestudio.worktrees && viewItem == worktree:linked",
+					"group": "2_manage@1"
+				},
+				{
+					"command": "sourcestudio.toggleFileBlame",
+					"when": "view == sourcestudio.files && viewItem =~ /^file:(staged|unstaged)$/",
+					"group": "1_open@2"
+				}
+			],
+			"webview/context": [
+				{
+					"command": "sourcestudio.showCommit",
+					"when": "webviewId == 'sourcestudio.commits' && webviewSection == 'commit'",
+					"group": "1_open@1"
+				},
+				{
+					"command": "sourcestudio.checkoutCommit",
+					"when": "webviewId == 'sourcestudio.commits' && webviewSection == 'commit'",
+					"group": "1_open@2"
+				},
+				{
+					"command": "sourcestudio.branchFromCommit",
+					"when": "webviewId == 'sourcestudio.commits' && webviewSection == 'commit'",
+					"group": "2_create@1"
+				},
+				{
+					"command": "sourcestudio.cherryPick",
+					"when": "webviewId == 'sourcestudio.commits' && webviewSection == 'commit'",
+					"group": "3_change@1"
+				},
+				{
+					"command": "sourcestudio.revertCommit",
+					"when": "webviewId == 'sourcestudio.commits' && webviewSection == 'commit'",
+					"group": "3_change@2"
+				},
+				{
+					"command": "sourcestudio.resetToCommit",
+					"when": "webviewId == 'sourcestudio.commits' && webviewSection == 'commit'",
+					"group": "3_change@3"
+				},
+				{
+					"command": "sourcestudio.copySha",
+					"when": "webviewId == 'sourcestudio.commits' && webviewSection == 'commit'",
+					"group": "4_copy@1"
+				},
+				{
+					"command": "sourcestudio.rewordCommit",
+					"when": "webviewId == 'sourcestudio.commits' && webviewSection == 'commit'",
+					"group": "5_rebase@1"
+				},
+				{
+					"command": "sourcestudio.squashCommit",
+					"when": "webviewId == 'sourcestudio.commits' && webviewSection == 'commit'",
+					"group": "5_rebase@2"
+				},
+				{
+					"command": "sourcestudio.fixupCommit",
+					"when": "webviewId == 'sourcestudio.commits' && webviewSection == 'commit'",
+					"group": "5_rebase@3"
+				},
+				{
+					"command": "sourcestudio.editCommit",
+					"when": "webviewId == 'sourcestudio.commits' && webviewSection == 'commit'",
+					"group": "5_rebase@4"
+				},
+				{
+					"command": "sourcestudio.moveCommitUp",
+					"when": "webviewId == 'sourcestudio.commits' && webviewSection == 'commit'",
+					"group": "5_rebase@5"
+				},
+				{
+					"command": "sourcestudio.moveCommitDown",
+					"when": "webviewId == 'sourcestudio.commits' && webviewSection == 'commit'",
+					"group": "5_rebase@6"
+				},
+				{
+					"command": "sourcestudio.dropCommit",
+					"when": "webviewId == 'sourcestudio.commits' && webviewSection == 'commit'",
+					"group": "5_rebase@7"
+				}
+			],
+			"editor/context": [
+				{
+					"command": "sourcestudio.stageSelection",
+					"when": "isInDiffEditor && resourceScheme == file",
+					"group": "1_sourcestudio@1"
+				},
+				{
+					"command": "sourcestudio.stageHunk",
+					"when": "isInDiffEditor && resourceScheme == file",
+					"group": "1_sourcestudio@2"
+				},
+				{
+					"command": "sourcestudio.discardSelection",
+					"when": "isInDiffEditor && resourceScheme == file",
+					"group": "1_sourcestudio@3"
+				},
+				{
+					"command": "sourcestudio.discardHunk",
+					"when": "isInDiffEditor && resourceScheme == file",
+					"group": "1_sourcestudio@4"
+				},
+				{
+					"command": "sourcestudio.unstageSelection",
+					"when": "isInDiffEditor && resourceScheme == sourcestudio-git",
+					"group": "1_sourcestudio@1"
+				},
+				{
+					"command": "sourcestudio.unstageHunk",
+					"when": "isInDiffEditor && resourceScheme == sourcestudio-git",
+					"group": "1_sourcestudio@2"
+				},
+				{
+					"command": "sourcestudio.showLineBlame",
+					"when": "resourceScheme == file && !isInDiffEditor",
+					"group": "2_sourcestudio_blame@1"
+				},
+				{
+					"command": "sourcestudio.toggleFileBlame",
+					"when": "resourceScheme == file && !isInDiffEditor",
+					"group": "2_sourcestudio_blame@2"
+				},
+				{
+					"command": "sourcestudio.toggleLineBlame",
+					"when": "resourceScheme == file && !isInDiffEditor",
+					"group": "2_sourcestudio_blame@3"
+				}
+			],
+			"editor/title": [
+				{
+					"command": "sourcestudio.stageSelection",
+					"when": "isInDiffEditor && resourceScheme == file",
+					"group": "navigation@1"
+				},
+				{
+					"command": "sourcestudio.unstageSelection",
+					"when": "isInDiffEditor && resourceScheme == sourcestudio-git",
+					"group": "navigation@1"
+				},
+				{
+					"command": "sourcestudio.toggleFileBlame",
+					"when": "resourceScheme == file && !isInDiffEditor",
+					"group": "navigation@2"
+				}
+			]
+		},
+		"keybindings": [
+			{
+				"command": "sourcestudio.toggleStage",
+				"key": "space",
+				"when": "focusedView == sourcestudio.files && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.stageAll",
+				"key": "a",
+				"when": "focusedView == sourcestudio.files && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.discard",
+				"key": "d",
+				"when": "focusedView == sourcestudio.files && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.commit",
+				"key": "c",
+				"when": "focusedView =~ /^sourcestudio\\./ && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.push",
+				"key": "shift+p",
+				"when": "focusedView =~ /^sourcestudio\\./ && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.pull",
+				"key": "p",
+				"when": "focusedView =~ /^sourcestudio\\./ && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.fetch",
+				"key": "f",
+				"when": "focusedView =~ /^sourcestudio\\./ && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.refresh",
+				"key": "shift+r",
+				"when": "focusedView =~ /^sourcestudio\\.(repos|files)$/ && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.showKeymap",
+				"key": "shift+/",
+				"when": "focusedView =~ /^sourcestudio\\./ && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.repos.focus",
+				"key": "1",
+				"when": "focusedView =~ /^sourcestudio\\./ && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.files.focus",
+				"key": "2",
+				"when": "focusedView =~ /^sourcestudio\\./ && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.checkoutBranch",
+				"key": "space",
+				"when": "focusedView == sourcestudio.branches && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.newBranch",
+				"key": "n",
+				"when": "focusedView == sourcestudio.branches && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.deleteBranch",
+				"key": "d",
+				"when": "focusedView == sourcestudio.branches && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.renameBranch",
+				"key": "shift+r",
+				"when": "focusedView == sourcestudio.branches && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.rebaseOnto",
+				"key": "r",
+				"when": "focusedView == sourcestudio.branches && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.mergeInto",
+				"key": "shift+m",
+				"when": "focusedView == sourcestudio.branches && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.setUpstream",
+				"key": "u",
+				"when": "focusedView == sourcestudio.branches && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.branches.focus",
+				"key": "3",
+				"when": "focusedView =~ /^sourcestudio\\./ && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.createStash",
+				"key": "s",
+				"when": "focusedView == sourcestudio.files && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.worktrees.focus",
+				"key": "4",
+				"when": "focusedView =~ /^sourcestudio\\./ && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.stashes.focus",
+				"key": "6",
+				"when": "focusedView =~ /^sourcestudio\\./ && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.switchWorktree",
+				"key": "space",
+				"when": "focusedView == sourcestudio.worktrees && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.addWorktree",
+				"key": "n",
+				"when": "focusedView == sourcestudio.worktrees && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.removeWorktree",
+				"key": "d",
+				"when": "focusedView == sourcestudio.worktrees && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.applyStash",
+				"key": "space",
+				"when": "focusedView == sourcestudio.stashes && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.popStash",
+				"key": "g",
+				"when": "focusedView == sourcestudio.stashes && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.dropStash",
+				"key": "d",
+				"when": "focusedView == sourcestudio.stashes && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.createStash",
+				"key": "n",
+				"when": "focusedView == sourcestudio.stashes && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.commits.focus",
+				"key": "5",
+				"when": "focusedView =~ /^sourcestudio\\./ && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.amendCommit",
+				"key": "shift+a",
+				"when": "focusedView == sourcestudio.files && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.undo",
+				"key": "z",
+				"when": "focusedView =~ /^sourcestudio\\./ && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.redo",
+				"key": "shift+z",
+				"when": "focusedView =~ /^sourcestudio\\./ && !inputFocus"
+			},
+			{
+				"command": "sourcestudio.stageSelection",
+				"key": "alt+s",
+				"when": "isInDiffEditor && resourceScheme == file && editorTextFocus"
+			},
+			{
+				"command": "sourcestudio.stageHunk",
+				"key": "alt+h",
+				"when": "isInDiffEditor && resourceScheme == file && editorTextFocus"
+			},
+			{
+				"command": "sourcestudio.unstageSelection",
+				"key": "alt+u",
+				"when": "isInDiffEditor && resourceScheme == sourcestudio-git && editorTextFocus"
+			},
+			{
+				"command": "sourcestudio.unstageHunk",
+				"key": "alt+shift+h",
+				"when": "isInDiffEditor && resourceScheme == sourcestudio-git && editorTextFocus"
+			},
+			{
+				"command": "sourcestudio.toggleFileBlame",
+				"key": "alt+b",
+				"when": "editorTextFocus && resourceScheme == file && !isInDiffEditor"
+			}
+		],
+		"configuration": {
+			"title": "Source Studio",
+			"properties": {
+				"sourcestudio.gitPath": {
+					"type": "string",
+					"default": "git",
+					"description": "Path to the git executable."
+				},
+				"sourcestudio.scanDepth": {
+					"type": "number",
+					"default": 3,
+					"description": "How many folder levels below each workspace folder to scan for repositories."
+				},
+				"sourcestudio.ignoredFolders": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"default": [
+						"node_modules",
+						".git",
+						"dist",
+						"build",
+						"vendor",
+						"tmp",
+						".next"
+					],
+					"description": "Folder names skipped when scanning for repositories."
+				},
+				"sourcestudio.commit.branchPrefixPattern": {
+					"type": "string",
+					"default": "(?:^|/)([A-Z][A-Z0-9]+-\\d+)",
+					"description": "Regex run against the branch name; the first capture group (or whole match) seeds the commit subject. Empty to disable."
+				},
+				"sourcestudio.commit.branchPrefixFormat": {
+					"type": "string",
+					"default": "{match}: ",
+					"description": "How the branch match is inserted into the subject. {match} is replaced."
+				},
+				"sourcestudio.commit.templateFiles": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"default": [
+						".gitmessage",
+						".gitmessage.txt",
+						".github/COMMIT_TEMPLATE.md",
+						".github/commit_template.md",
+						".github/pull_request_template.md",
+						"pull_request_template.md",
+						"docs/pull_request_template.md"
+					],
+					"description": "Files (relative to the repository root) to pre-fill the commit description from, tried in order. git's commit.template setting always takes precedence."
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run build -- --minify",
+		"build": "node esbuild.mjs",
+		"watch": "node esbuild.mjs --watch",
+		"typecheck": "tsc --noEmit",
+		"package": "vsce package",
+		"publish": "vsce publish"
+	},
+	"devDependencies": {
+		"@types/node": "^20.14.0",
+		"@types/vscode": "^1.90.0",
+		"@vscode/vsce": "^3.1.0",
+		"esbuild": "^0.23.0",
+		"typescript": "^5.5.0"
+	}
+}
