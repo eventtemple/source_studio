@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0
+
+- Fetch, Pull and Push toolbar buttons in the Repositories and Branches views
+
 ## 1.1.0
 
 GitHub integration.

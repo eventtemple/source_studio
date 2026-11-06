@@ -2,7 +2,7 @@
 	"name": "source-studio",
 	"displayName": "Source Studio",
 	"description": "lazygit-style source control for VS Code: multi-repo status, keyboard-driven staging, branches, worktrees, stashes, a commit graph, interactive rebase, blame, undo and GitHub pull requests.",
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"publisher": "EventTemple",
 	"license": "MIT",
 	"icon": "media/icon-128.png",
@@ -675,6 +675,21 @@
 					"group": "navigation@9"
 				},
 				{
+					"command": "sourcestudio.fetch",
+					"when": "view == sourcestudio.repos",
+					"group": "navigation@4"
+				},
+				{
+					"command": "sourcestudio.pull",
+					"when": "view == sourcestudio.repos",
+					"group": "navigation@5"
+				},
+				{
+					"command": "sourcestudio.push",
+					"when": "view == sourcestudio.repos",
+					"group": "navigation@6"
+				},
+				{
 					"command": "sourcestudio.commit",
 					"when": "view == sourcestudio.files",
 					"group": "navigation@1"
@@ -730,6 +745,16 @@
 					"group": "navigation@2"
 				},
 				{
+					"command": "sourcestudio.pull",
+					"when": "view == sourcestudio.branches",
+					"group": "navigation@3"
+				},
+				{
+					"command": "sourcestudio.push",
+					"when": "view == sourcestudio.branches",
+					"group": "navigation@4"
+				},
+				{
 					"command": "sourcestudio.showKeymap",
 					"when": "view == sourcestudio.branches",
 					"group": "navigation@9"
@@ -772,7 +797,7 @@
 				{
 					"command": "sourcestudio.showReflog",
 					"when": "view == sourcestudio.branches",
-					"group": "navigation@3"
+					"group": "navigation@5"
 				},
 				{
 					"command": "sourcestudio.githubSignIn",

@@ -7,3 +7,4 @@ tsconfig.json
 **/*.map
 media/icon.png
 *.vsix
+.remember/**
