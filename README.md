@@ -1,6 +1,6 @@
 # Source Studio
 
-**lazygit-style source control for VS Code.** Keyboard-driven staging, branches, worktrees, stashes, a commit graph, interactive rebase, blame and undo — across every repository in your workspace, without leaving the editor.
+**lazygit-style source control for VS Code.** Keyboard-driven staging, branches, worktrees, stashes, a commit graph, interactive rebase, blame, undo and GitHub pull requests — across every repository in your workspace, without leaving the editor.
 
 If you've ever kept a terminal open just to run `lazygit`, this is that workflow inside VS Code: six focused panels, single-key actions, and diffs that open in the editor you're already looking at.
 
@@ -16,6 +16,7 @@ If you've ever kept a terminal open just to run `lazygit`, this is that workflow
 - **Branches, worktrees and stashes** as first-class views with checkout, create, delete, rename, rebase-onto, merge-into, fast-forward, upstream, switch worktree, apply/pop/drop stash.
 - **Conflicts handled.** When a rebase, merge, cherry-pick or stash-apply stops on conflicts, the Files view shows them and Continue/Abort appear in the toolbar.
 - **Blame** per file (gutter annotations) or for the current line, with hover cards linking to the commit.
+- **GitHub built in.** Branches show their open pull request and CI status. `o` opens a branch's PR, or pushes the branch and opens the compare page to create one. Open or copy a GitHub link for any branch, commit, file or selected lines. Works with GitHub Enterprise Server too.
 
 ## The panels
 
@@ -25,7 +26,7 @@ Press `1`–`6` from any Source Studio view to jump between them, `?` to see the
 |---|---|---|
 | 1 | **Repositories** | Every repo with its branch, ahead/behind and change count. Click to make it active. |
 | 2 | **Files** | Conflicts, staged, unstaged and untracked files, nested by folder. Click a file for its diff, a folder for a multi-diff. |
-| 3 | **Branches** | Local branches by recency (current pinned), remotes grouped by name. |
+| 3 | **Branches** | Local branches by recency (current pinned), remotes grouped by name. Branches with an open GitHub PR show its number and check status. |
 | 4 | **Worktrees** | Every worktree of the active repo; switch, create, remove, prune. |
 | 5 | **Commits** | The graph for the checked-out branch (`a` for all branches). Hollow dots are unpushed. |
 | 6 | **Stashes** | Click to see a stash's contents. |
@@ -67,6 +68,7 @@ Keys work while a Source Studio view has focus and don't interfere with the edit
 | `r` | Rebase current branch onto selected |
 | `M` | Merge selected into current |
 | `u` | Set upstream |
+| `o` | Open pull request (or create one on GitHub) |
 
 **Commits**
 
@@ -81,6 +83,7 @@ Keys work while a Source Studio view has focus and don't interfere with the edit
 | `r` / `d` / `e` | Reword / Drop / Edit (pause rebase) |
 | `J` / `K` | Move commit down / up |
 | `y` | Copy SHA |
+| `o` | Open commit on GitHub |
 | `a` | Toggle all branches |
 
 **Worktrees** — `space` switch, `n` new, `d` remove. **Stashes** — `space` apply, `g` pop, `d` drop, `n` new.
@@ -93,7 +96,7 @@ Keys work while a Source Studio view has focus and don't interfere with the edit
 | `alt+u` / `alt+shift+h` | Unstage selected lines / hunk (in the HEAD ↔ Index diff) |
 | right-click | Discard selected lines / hunk |
 
-**In any editor** — `alt+b` toggles file blame; right-click for line blame.
+**In any editor** — `alt+b` toggles file blame; `alt+g` opens the current line (or selection) on GitHub; right-click for line blame and to copy a GitHub link.
 
 ![Commit Dialog](media/commit_dialog.png)
 
@@ -102,6 +105,41 @@ Keys work while a Source Studio view has focus and don't interfere with the edit
 `c` opens a tab with a subject line, description, and toggles for amend, `--no-verify` and sign-off. `⌘/Ctrl+Enter` commits, `⌘/Ctrl+Shift+Enter` commits and pushes. Lines starting with `#` are stripped, so comment-style templates work as they do in a terminal. Drafts are kept per repository until you commit.
 
 The description is pre-filled from, in order: git's `commit.template`, then the files in `sourcestudio.commit.templateFiles` (defaults cover `.gitmessage` and the common `pull_request_template.md` locations). The subject is seeded from the ticket key in the branch name, e.g. `feature/PLA-123-thing` → `PLA-123: `.
+
+## GitHub
+
+When the active repository's remote (`origin` by default) points at GitHub, Source Studio adds pull request and CI status on top of the git views. It signs in with VS Code's built-in GitHub account, so there is no token to manage. If you aren't signed in, a **Sign in to GitHub** button appears in the Branches toolbar.
+
+**Pull requests in Branches.** A branch with an open PR shows its number next to it, e.g. `#42 ✓` or `#57 draft ●`. Hover for the PR title and author, with a link to the PR. The check glyph combines GitHub Actions, check runs and commit statuses: `✓` passed, `✗` failed, `●` still running. The current branch shows its check status even without a PR.
+
+**Open or create a PR.** Press `o` on a branch, or click the pull-request icon:
+
+- If the branch has an open PR, it opens in the browser.
+- If the branch isn't on the remote yet, Source Studio offers to push it (setting upstream) first.
+- If it has unpushed commits, you can push first or open anyway.
+- Then it opens GitHub's compare page against the repository's default branch, ready to create the PR.
+
+Right-click a branch with a PR to copy its URL.
+
+**Open on GitHub.** Jump to the GitHub page for whatever you're looking at:
+
+| From | Opens |
+|---|---|
+| Branches (right-click) | The branch's tree |
+| Commits (`o` or right-click) | The commit |
+| Files (right-click) | The file at the current `HEAD` commit |
+| Editor (`alt+g` or right-click) | The file at `HEAD`, with the current line or selected lines highlighted |
+
+**Copy GitHub URL** (right-click in Commits or an editor) copies the same link instead of opening it. Links use the `HEAD` commit SHA, so they stay stable but only resolve once that commit is pushed.
+
+**GitHub Enterprise Server.** Hosts set in VS Code's `github-enterprise.uri` are recognized automatically and sign in through VS Code's GitHub Enterprise account. Add any other hostnames to `sourcestudio.github.enterpriseHosts`.
+
+### Notes
+
+- PR and check data is cached for a minute and refreshed when the repository changes, so the views don't hammer the API.
+- Sign-in requests the `repo` scope. GitHub needs it to read pull requests and checks on private repositories.
+- PRs opened from forks aren't matched to local branches.
+- Set `sourcestudio.github.enabled` to `false` to turn PR and check status off.
 
 ## Settings
 
@@ -113,11 +151,15 @@ The description is pre-filled from, in order: git's `commit.template`, then the 
 | `sourcestudio.commit.templateFiles` | `.gitmessage`, `pull_request_template.md`, … | Commit-template files to try, relative to the repo root |
 | `sourcestudio.commit.branchPrefixPattern` | `(?:^\|/)([A-Z][A-Z0-9]+-\d+)` | Regex that pulls a ticket key from the branch name (empty to disable) |
 | `sourcestudio.commit.branchPrefixFormat` | `{match}: ` | How the key is inserted into the subject |
+| `sourcestudio.github.enabled` | `true` | Show pull request and check status for branches |
+| `sourcestudio.github.remote` | `origin` | Which remote to treat as the GitHub repository |
+| `sourcestudio.github.enterpriseHosts` | `[]` | Extra GitHub Enterprise hostnames to treat as GitHub |
 
 ## Requirements
 
 - VS Code 1.90 or newer
 - git 2.35 or newer on your PATH (for `stash --staged` and `switch`)
+- Optional: a GitHub (or GitHub Enterprise Server) account signed in to VS Code, for pull request and check status
 
 Source Studio runs git directly; it doesn't replace or disable VS Code's built-in Git support, and the two coexist.
 
@@ -140,4 +182,4 @@ npm run typecheck    # tsc --noEmit
 npm run package      # build a .vsix
 ```
 
-The code is plain TypeScript bundled with esbuild: `src/git/` wraps git and parses its porcelain output, `src/views/` holds the six panels, `src/commands/` the actions, and `src/blame/` the annotations. See `CHANGELOG.md` for release notes.
+The code is plain TypeScript bundled with esbuild: `src/git/` wraps git and parses its porcelain output, `src/views/` holds the six panels, `src/commands/` the actions, `src/blame/` the annotations, and `src/github/` the GitHub API client and PR/check cache. See `CHANGELOG.md` for release notes.
