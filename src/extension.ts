@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { registerCommands } from './commands';
 import { registerBranchCommands } from './commands/branches';
 import { registerCommitCommands } from './commands/commits';
+import { registerGitHubCommands } from './commands/github';
 import { registerRebaseCommands } from './commands/rebase';
 import { registerStagingCommands } from './commands/staging';
 import { registerStashCommands } from './commands/stashes';
@@ -10,6 +11,7 @@ import { registerWorktreeCommands } from './commands/worktrees';
 import { BlameController } from './blame/blameController';
 import { GIT_SCHEME, GitContentProvider } from './diff/gitContentProvider';
 import { prepareRebaseHelper } from './git/rebase';
+import { GitHubService } from './github/githubService';
 import { RepoManager } from './model/repoManager';
 import { StatusBar } from './statusBar';
 import { BranchesView } from './views/branchesView';
@@ -24,7 +26,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const contentProvider = new GitContentProvider(repos);
   const reposView = new ReposView(repos);
   const filesView = new FilesView(repos);
-  const branchesView = new BranchesView(repos);
+  const github = new GitHubService(repos);
+  const branchesView = new BranchesView(repos, github);
   const worktreesView = new WorktreesView(repos);
   const stashesView = new StashesView(repos);
   const commitsView = new CommitsView(repos, context.extensionUri);
@@ -33,6 +36,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   context.subscriptions.push(
     repos,
+    github,
     contentProvider,
     vscode.workspace.registerTextDocumentContentProvider(GIT_SCHEME, contentProvider),
     reposView,
@@ -55,6 +59,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   registerRebaseCommands(context, { repos, commitsView });
   registerUndoCommands(context, { repos });
   registerStagingCommands(context, { repos });
+  registerGitHubCommands(context, { repos, github, branchesView, commitsView });
 
   await prepareRebaseHelper(context);
 

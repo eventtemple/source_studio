@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { relativeAge } from '../commands/util';
 import { GitRepository } from '../git/repository';
 import { Branch } from '../git/types';
+import { GitHubService } from '../github/githubService';
 import { RepoManager } from '../model/repoManager';
 
 export type BranchNode =
@@ -15,12 +16,18 @@ export class BranchesView implements vscode.TreeDataProvider<BranchNode>, vscode
   readonly treeView: vscode.TreeView<BranchNode>;
   private readonly disposables: vscode.Disposable[] = [];
 
-  constructor(private readonly repos: RepoManager) {
+  constructor(
+    private readonly repos: RepoManager,
+    private readonly github: GitHubService,
+  ) {
     this.treeView = vscode.window.createTreeView('sourcestudio.branches', { treeDataProvider: this, showCollapseAll: true });
     this.disposables.push(
       this.treeView,
       repos.onDidChangeActive(() => this.refresh()),
       repos.onDidChangeStatus((r) => {
+        if (r === repos.active) this.refresh();
+      }),
+      github.onDidChange((r) => {
         if (r === repos.active) this.refresh();
       }),
     );
@@ -88,7 +95,7 @@ export class BranchesView implements vscode.TreeDataProvider<BranchNode>, vscode
         return item;
       }
       case 'branch':
-        return branchItem(node);
+        return branchItem(node, this.github);
     }
   }
 
@@ -98,13 +105,19 @@ export class BranchesView implements vscode.TreeDataProvider<BranchNode>, vscode
   }
 }
 
-function branchItem(node: Extract<BranchNode, { type: 'branch' }>): vscode.TreeItem {
+const CHECK_GLYPH = { success: '✓', failure: '✗', pending: '●', none: '' } as const;
+
+function branchItem(node: Extract<BranchNode, { type: 'branch' }>, github: GitHubService): vscode.TreeItem {
   const b = node.branch;
   const label = b.remote ? b.name.slice(b.remote.length + 1) : b.name;
   const item = new vscode.TreeItem(label, vscode.TreeItemCollapsibleState.None);
   item.id = `${node.repo.root}|branch|${b.fullRef}`;
 
+  const pr = github.pullFor(node.repo, label);
+  const checks = github.checksFor(node.repo, b.sha);
   const parts: string[] = [];
+  if (pr) parts.push(`#${pr.number}${pr.draft ? ' draft' : ''}${checks && checks !== 'none' ? ' ' + CHECK_GLYPH[checks] : ''}`);
+  else if (b.current && checks && checks !== 'none') parts.push(CHECK_GLYPH[checks]);
   if (b.ahead) parts.push(`↑${b.ahead}`);
   if (b.behind) parts.push(`↓${b.behind}`);
   if (b.upstreamGone) parts.push('⚠ gone');
@@ -115,13 +128,15 @@ function branchItem(node: Extract<BranchNode, { type: 'branch' }>): vscode.TreeI
     ? new vscode.ThemeIcon('check', new vscode.ThemeColor('charts.green'))
     : new vscode.ThemeIcon(b.remote ? 'cloud' : 'git-branch');
 
-  const md = new vscode.MarkdownString();
+  const md = new vscode.MarkdownString(undefined, true);
   md.appendMarkdown(`**${b.name}** \`${b.sha}\`  \n`);
   if (b.upstream) md.appendMarkdown(`→ ${b.upstream}${b.upstreamGone ? ' (gone)' : ''}  \n`);
+  if (pr) md.appendMarkdown(`$(git-pull-request) [#${pr.number} ${pr.title}](${pr.url})${pr.draft ? ' _(draft)_' : ''} by ${pr.author}  \n`);
+  if (checks && checks !== 'none') md.appendMarkdown(`Checks: ${checks}  \n`);
   md.appendMarkdown(`\n${b.subject}`);
   item.tooltip = md;
 
-  item.contextValue = b.remote ? 'branch:remote' : b.current ? 'branch:current' : 'branch:local';
+  item.contextValue = (b.remote ? 'branch:remote' : b.current ? 'branch:current' : 'branch:local') + (pr ? ':pr' : '');
   return item;
 }
 

@@ -295,6 +295,7 @@ function html(webview: vscode.Webview): string {
     't': () => cmd('sourcestudio.revertCommit'),
     'g': () => cmd('sourcestudio.resetToCommit'),
     'y': () => cmd('sourcestudio.copySha'),
+    'o': () => cmd('sourcestudio.openOnGitHub'),
     's': () => cmd('sourcestudio.squashCommit'),
     'f': () => cmd('sourcestudio.fixupCommit'),
     'r': () => cmd('sourcestudio.rewordCommit'),

@@ -246,6 +246,17 @@ export class GitRepository implements vscode.Disposable {
     await this.run(args);
   }
 
+  /** URL of a remote, or undefined if it doesn't exist. */
+  async remoteUrl(name = 'origin'): Promise<string | undefined> {
+    try {
+      const { stdout } = await this.run(['remote', 'get-url', name]);
+      return stdout.trim() || undefined;
+    } catch (e) {
+      if (e instanceof GitError) return undefined;
+      throw e;
+    }
+  }
+
   // ---------------------------------------------------------------- branches
 
   async checkout(name: string): Promise<void> {
