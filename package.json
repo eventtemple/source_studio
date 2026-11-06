@@ -487,6 +487,22 @@
 				"command": "sourcestudio.copyGitHubUrl",
 				"title": "Copy GitHub URL",
 				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.markResolved",
+				"title": "Mark Resolved",
+				"category": "Source Studio",
+				"icon": "$(check)"
+			},
+			{
+				"command": "sourcestudio.acceptCurrent",
+				"title": "Accept Current (Whole File)",
+				"category": "Source Studio"
+			},
+			{
+				"command": "sourcestudio.acceptIncoming",
+				"title": "Accept Incoming (Whole File)",
+				"category": "Source Studio"
 			}
 		],
 		"menus": {
@@ -666,6 +682,18 @@
 				{
 					"command": "sourcestudio.copyPullRequestUrl",
 					"when": "false"
+				},
+				{
+					"command": "sourcestudio.markResolved",
+					"when": "isMergeEditor"
+				},
+				{
+					"command": "sourcestudio.acceptCurrent",
+					"when": "false"
+				},
+				{
+					"command": "sourcestudio.acceptIncoming",
+					"when": "false"
 				}
 			],
 			"view/title": [
@@ -813,7 +841,7 @@
 				},
 				{
 					"command": "sourcestudio.stage",
-					"when": "view == sourcestudio.files && viewItem =~ /^(file|dir|group):(unstaged|untracked|conflicted)$/",
+					"when": "view == sourcestudio.files && viewItem =~ /^(file|dir|group):(unstaged|untracked)$/",
 					"group": "inline@2"
 				},
 				{
@@ -970,6 +998,26 @@
 					"command": "sourcestudio.openOnGitHub",
 					"when": "view == sourcestudio.files && viewItem =~ /^file:/",
 					"group": "1_open@3"
+				},
+				{
+					"command": "sourcestudio.markResolved",
+					"when": "view == sourcestudio.files && viewItem =~ /^(file|dir|group):conflicted$/",
+					"group": "inline@2"
+				},
+				{
+					"command": "sourcestudio.markResolved",
+					"when": "view == sourcestudio.files && viewItem =~ /^(file|dir|group):conflicted$/",
+					"group": "0_conflict@1"
+				},
+				{
+					"command": "sourcestudio.acceptCurrent",
+					"when": "view == sourcestudio.files && viewItem =~ /^(file|dir|group):conflicted$/",
+					"group": "0_conflict@2"
+				},
+				{
+					"command": "sourcestudio.acceptIncoming",
+					"when": "view == sourcestudio.files && viewItem =~ /^(file|dir|group):conflicted$/",
+					"group": "0_conflict@3"
 				}
 			],
 			"webview/context": [
@@ -1126,6 +1174,11 @@
 					"command": "sourcestudio.toggleFileBlame",
 					"when": "resourceScheme == file && !isInDiffEditor",
 					"group": "navigation@2"
+				},
+				{
+					"command": "sourcestudio.markResolved",
+					"when": "isMergeEditor",
+					"group": "navigation@1"
 				}
 			]
 		},

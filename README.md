@@ -14,7 +14,7 @@ If you've ever kept a terminal open just to run `lazygit`, this is that workflow
 - **Commit graph with history rewriting.** Squash, fixup, reword, drop, reorder and edit commits with one key each. Cherry-pick, revert, reset, branch from any commit.
 - **Undo.** `z` walks the reflog to undo the last commit, rebase, reset, checkout or merge; `Z` redoes. A reflog browser is there for anything deeper.
 - **Branches, worktrees and stashes** as first-class views with checkout, create, delete, rename, rebase-onto, merge-into, fast-forward, upstream, switch worktree, apply/pop/drop stash.
-- **Conflicts handled.** When a rebase, merge, cherry-pick or stash-apply stops on conflicts, the Files view shows them and Continue/Abort appear in the toolbar.
+- **Conflicts handled.** When a rebase, merge, cherry-pick or stash-apply stops on conflicts, the Files view lists them. Click one to resolve it in VS Code's 3-way merge editor, mark it resolved, then Continue or Abort from the toolbar.
 - **Blame** per file (gutter annotations) or for the current line, with hover cards linking to the commit.
 - **GitHub built in.** Branches show their open pull request and CI status. `o` opens a branch's PR, or pushes the branch and opens the compare page to create one. Open or copy a GitHub link for any branch, commit, file or selected lines. Works with GitHub Enterprise Server too.
 
@@ -105,6 +105,19 @@ Keys work while a Source Studio view has focus and don't interfere with the edit
 `c` opens a tab with a subject line, description, and toggles for amend, `--no-verify` and sign-off. `⌘/Ctrl+Enter` commits, `⌘/Ctrl+Shift+Enter` commits and pushes. Lines starting with `#` are stripped, so comment-style templates work as they do in a terminal. Drafts are kept per repository until you commit.
 
 The description is pre-filled from, in order: git's `commit.template`, then the files in `sourcestudio.commit.templateFiles` (defaults cover `.gitmessage` and the common `pull_request_template.md` locations). The subject is seeded from the ticket key in the branch name, e.g. `feature/PLA-123-thing` → `PLA-123: `.
+
+## Resolving conflicts
+
+When a rebase, merge, cherry-pick, revert or stash apply stops on conflicts, the files appear under **Conflicts** in the Files view.
+
+- **Click a conflicted file** to open it in VS Code's 3-way merge editor, with Current and Incoming labeled by branch and commit. To edit the conflict markers by hand instead, use **Open File**.
+- **Mark Resolved** (the check button in the merge editor's title bar, or inline in Files) stages the file. From the merge editor it asks first if conflicts are still unhandled. From Files it warns if the file still contains conflict markers.
+- **Accept Current / Accept Incoming** (right-click a file, folder or the Conflicts group) resolves whole files to one side. This discards the other side's changes, so it asks first.
+- **Deleted on one side:** when one side deleted the file and the other changed it, clicking it asks whether to keep the file or delete it.
+
+When Conflicts is empty, use **Continue** in the Files or Branches toolbar to finish the operation, or **Abort** to undo it.
+
+The merge editor is VS Code's own and is opened through the same internal command the built-in Git extension uses. While the built-in Git extension is enabled, its own **Complete Merge** button also appears in the merge editor; it stages the file too, but then switches to VS Code's Source Control view.
 
 ## GitHub
 

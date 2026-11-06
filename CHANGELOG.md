@@ -3,6 +3,10 @@
 ## 1.2.0
 
 - Fetch, Pull and Push toolbar buttons in the Repositories and Branches views
+- Conflicted files open in VS Code's 3-way merge editor, with Current and Incoming labeled by branch and commit
+- Mark Resolved in the merge editor title bar and the Files view; warns about unhandled conflicts or leftover conflict markers
+- Accept Current / Accept Incoming for whole files, folders or every conflict at once
+- Keep-or-delete choice for conflicts where one side deleted the file
 
 ## 1.1.0
 

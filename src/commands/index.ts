@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { openConflict } from '../diff/mergeEditor';
 import { openFileDiff, openMultiDiff } from '../diff/openDiff';
 import { GitError } from '../git/exec';
 import { GitRepository } from '../git/repository';
@@ -47,7 +48,9 @@ export function registerCommands(context: vscode.ExtensionContext, deps: Deps): 
   register('sourcestudio.openDiff', async (node?: FileNode) => {
     const [first] = targets(node);
     if (!first || first.type === 'group') return;
-    if (first.type === 'file') {
+    if (first.type === 'file' && first.area === 'conflicted') {
+      await openConflict(first.repo, first.file);
+    } else if (first.type === 'file') {
       await openFileDiff(first.repo, first.file, first.area);
     } else {
       await openMultiDiff(first.repo, filesUnder(first), first.area, `${first.relPath} (${first.area})`);

@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { registerCommands } from './commands';
 import { registerBranchCommands } from './commands/branches';
 import { registerCommitCommands } from './commands/commits';
+import { registerConflictCommands } from './commands/conflicts';
 import { registerGitHubCommands } from './commands/github';
 import { registerRebaseCommands } from './commands/rebase';
 import { registerStagingCommands } from './commands/staging';
@@ -59,6 +60,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   registerRebaseCommands(context, { repos, commitsView });
   registerUndoCommands(context, { repos });
   registerStagingCommands(context, { repos });
+  registerConflictCommands(context, { repos, filesView });
   registerGitHubCommands(context, { repos, github, branchesView, commitsView });
 
   await prepareRebaseHelper(context);

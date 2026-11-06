@@ -324,6 +324,27 @@ export class GitRepository implements vscode.Disposable {
     if (this._operation) await this.run([this._operation, '--abort']);
   }
 
+  /** Overwrites conflicted paths with one side: `ours` is Current (stage 2), `theirs` is Incoming (stage 3). */
+  async checkoutSide(paths: string[], side: 'ours' | 'theirs'): Promise<void> {
+    if (paths.length) await this.run(['checkout', `--${side}`, '--', ...paths]);
+  }
+
+  /** Deletes paths from the index and working tree, e.g. to resolve a conflict as "deleted". */
+  async remove(paths: string[]): Promise<void> {
+    if (paths.length) await this.run(['rm', '-q', '-f', '--', ...paths]);
+  }
+
+  /** `abc1234 Subject` for a ref, or undefined when the ref doesn't resolve. */
+  async describe(ref: string): Promise<string | undefined> {
+    try {
+      const { stdout } = await this.run(['log', '-1', '--format=%h %s', ref]);
+      return stdout.trim() || undefined;
+    } catch (e) {
+      if (e instanceof GitError) return undefined;
+      throw e;
+    }
+  }
+
   /** Files changed between two refs (e.g. `stash@{0}^` and `stash@{0}`). */
   async changedFiles(from: string, to: string): Promise<ChangedFile[]> {
     const { stdout } = await this.run(['diff', '--name-status', '-z', '-M', from, to]);
